@@ -200,9 +200,13 @@ module Synthesis
 
       def self.build_file_list(path, extension)
         re = Regexp.new(".#{extension}\\z")
-        file_list = Dir.new(path).entries.delete_if { |x| ! (x =~ re) }.map {|x| x.chomp(".#{extension}")}
-        # reverse javascript entries so prototype comes first on a base rails app
-        file_list.reverse! if extension == "js"
+		
+		otherDirs = Dir.glob( File.join(path, '**','*') ).reject{|o| not File.directory?(o)}
+		
+		file_list = Dir.new(path).entries.delete_if { |x| ! (x =~ re) }.map {|x| x.chomp(".#{extension}")}
+		
+		otherDirs.each{ |d| file_list += Dir.new(d).entries.delete_if { |x| ! (x =~ re) }.map {|x| d.sub(path, '') + "/" + x.chomp(".#{extension}")}}
+		
         file_list
       end
    
