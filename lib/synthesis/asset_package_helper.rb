@@ -10,16 +10,15 @@ module Synthesis
 
       if sources.include?(:defaults) 
         sources = sources[0..(sources.index(:defaults))] + 
-          ['prototype', 'effects', 'dragdrop', 'controls'] + 
-          (File.exists?("#{Rails.root}/public/javascripts/application.js") ? ['application'] : []) + 
+          (File.exists?("#{FubuRoot}/#{FubuWebProject}/content/scripts/application.js") ? ['application'] : []) + 
           sources[(sources.index(:defaults) + 1)..sources.length]
         sources.delete(:defaults)
       end
 
       sources.collect!{|s| s.to_s}
       sources = (should_merge? ? 
-        AssetPackage.targets_from_sources("javascripts", sources) : 
-        AssetPackage.sources_from_targets("javascripts", sources))
+        AssetPackage.targets_from_sources("scripts", sources) : 
+        AssetPackage.sources_from_targets("scripts", sources))
         
       sources.collect {|source| javascript_include_tag(source, options) }.join("\n")
     end
@@ -29,8 +28,8 @@ module Synthesis
 
       sources.collect!{|s| s.to_s}
       sources = (should_merge? ? 
-        AssetPackage.targets_from_sources("stylesheets", sources) : 
-        AssetPackage.sources_from_targets("stylesheets", sources))
+        AssetPackage.targets_from_sources("css", sources) : 
+        AssetPackage.sources_from_targets("css", sources))
 
       sources.collect { |source| stylesheet_link_tag(source, options) }.join("\n")    
     end

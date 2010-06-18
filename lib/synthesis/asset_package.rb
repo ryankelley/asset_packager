@@ -1,8 +1,8 @@
 module Synthesis
   class AssetPackage
 
-    @asset_base_path    = "#{Rails.root}/public"
-    @asset_packages_yml = File.exists?("#{Rails.root}/config/asset_packages.yml") ? YAML.load_file("#{Rails.root}/config/asset_packages.yml") : nil
+    @asset_base_path    = "#{FubuRoot}/#{FubuWebProject}/Content"
+    @asset_packages_yml = File.exists?("#{FubuRoot}/#{FubuWebProject}/config/asset_packages.yml") ? YAML.load_file("#{FubuRoot}/#{FubuWebProject}/config/asset_packages.yml") : nil
   
     # singleton methods
     class << self
@@ -70,13 +70,13 @@ module Synthesis
       end
 
       def create_yml
-        unless File.exists?("#{Rails.root}/config/asset_packages.yml")
+        unless File.exists?("#{FubuRoot}/#{FubuWebProject}/config/asset_packages.yml")
           asset_yml = Hash.new
 
-          asset_yml['javascripts'] = [{"base" => build_file_list("#{Rails.root}/public/javascripts", "js")}]
-          asset_yml['stylesheets'] = [{"base" => build_file_list("#{Rails.root}/public/stylesheets", "css")}]
+          asset_yml['scripts'] = [{"base" => build_file_list("#{FubuRoot}/#{FubuWebProject}/content/scripts", "js")}]
+          asset_yml['css'] = [{"base" => build_file_list("#{FubuRoot}/#{FubuWebProject}/content/css", "css")}]
 
-          File.open("#{Rails.root}/config/asset_packages.yml", "w") do |out|
+          File.open("#{FubuRoot}/#{FubuWebProject}/config/asset_packages.yml", "w") do |out|
             YAML.dump(asset_yml, out)
           end
 
@@ -147,14 +147,14 @@ module Synthesis
     
       def compressed_file
         case @asset_type
-          when "javascripts" then compress_js(merged_file)
-          when "stylesheets" then compress_css(merged_file)
+          when "scripts" then compress_js(merged_file)
+          when "css" then compress_css(merged_file)
         end
       end
 
       def compress_js(source)
-        jsmin_path = "#{Rails.root}/vendor/plugins/asset_packager/lib"
-        tmp_path = "#{Rails.root}/tmp/#{@target}_packaged"
+        jsmin_path = "build_support/lib"
+        tmp_path = "build_support/tmp/#{@target}_packaged"
       
         # write out to a temp file
         File.open("#{tmp_path}_uncompressed.js", "w") {|f| f.write(source) }
@@ -185,8 +185,8 @@ module Synthesis
 
       def get_extension
         case @asset_type
-          when "javascripts" then "js"
-          when "stylesheets" then "css"
+          when "scripts" then "js"
+          when "css" then "css"
         end
       end
       
